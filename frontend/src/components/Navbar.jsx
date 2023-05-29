@@ -1,7 +1,22 @@
 import { Link } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { FaSignInAlt, FaSignOutAlt, FaUser } from 'react-icons/fa';
 
+import { logout } from '../features/auth/authSlice';
+
 const Navbar = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { user } = useSelector(state => state.auth);
+
+  const onLogout = () => {
+    dispatch(logout());
+    toast.success('Logged out successfully');
+    navigate('/');
+  };
+
   return (
     <nav className="navbar navbar-expand-lg navbar-light p-3 border-bottom">
       <div className="container">
@@ -22,16 +37,26 @@ const Navbar = () => {
 
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav ms-auto">
-            <li className="nav-item">
-              <Link className="nav-link" to="/register">
-                <FaUser /> Register
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/login">
-                <FaSignInAlt /> Login
-              </Link>
-            </li>
+            {user ? (
+              <li className="nav-item">
+                <button className="btn btn-primary" onClick={onLogout}>
+                  <FaSignOutAlt /> Logout
+                </button>
+              </li>
+            ) : (
+              <>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/register">
+                    <FaUser /> Register
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/login">
+                    <FaSignInAlt /> Login
+                  </Link>
+                </li>
+              </>
+            )}
           </ul>
         </div>
       </div>
